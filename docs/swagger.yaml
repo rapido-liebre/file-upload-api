@@ -1,0 +1,77 @@
+basePath: /
+host: localhost:4000
+info:
+  contact: {}
+  description: API for uploading and listing files with metadata
+  title: File Upload API
+  version: "1.0"
+paths:
+  /files:
+    get:
+      description: Retrieves a list of uploaded files and their metadata
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties:
+                type: string
+              type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List uploaded files
+      tags:
+      - Files
+  /upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads a file and stores metadata
+      parameters:
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: File title
+        in: formData
+        name: title
+        type: string
+      - description: File description
+        in: formData
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload a file
+      tags:
+      - Files
+schemes:
+- http
+swagger: "2.0"

@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: .
+    container_name: node_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - BACKEND_URL=http://localhost:4000  # Change if backend runs elsewhere
+    restart: always

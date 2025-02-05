@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload & Listing</title>
+</head>
+<body>
+<h1>File Upload & Listing</h1>
+
+<form id="uploadForm">
+  <label for="file">Select File:</label>
+  <input type="file" id="file" required>
+  <input type="text" id="title" placeholder="Title">
+  <input type="text" id="description" placeholder="Description">
+  <button type="submit">Upload</button>
+</form>
+
+<h2>Uploaded Files</h2>
+<ul id="fileList"></ul>
+
+<script>
+  async function fetchFiles() {
+    try {
+      const response = await fetch("/files");
+      const files = await response.json();
+
+      const fileList = document.getElementById("fileList");
+      fileList.innerHTML = ""; // Clear existing list
+
+      files.forEach(file => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+                        <strong>${file.title || "Untitled"}</strong> - ${file.description || "No description"}
+                        <br>
+                        <a href="${file.file_path}" download>Download</a>
+                    `;
+        fileList.appendChild(listItem);
+      });
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  }
+
+  document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const fileInput = document.getElementById("file");
+    const title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
+    const formData = new FormData();
+
+    formData.append("file", fileInput.files[0]);
+    formData.append("title", title);
+    formData.append("description", description);
+
+    try {
+      await fetch("http://localhost:4000/upload", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-API-Key": "my-secret-api-key",
+        }
+      });
+      alert("File uploaded successfully!");
+      fetchFiles(); // Refresh file list
+    } catch (error) {
+      alert("File upload failed");
+      console.error(error);
+    }
+  });
+
+  // Fetch files on page load
+  fetchFiles();
+</script>
+</body>
+</html>
